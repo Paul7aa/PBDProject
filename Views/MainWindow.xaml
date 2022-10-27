@@ -41,7 +41,6 @@
                         <RowDefinition Height="20" />
                     </Grid.RowDefinitions>
 
-
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="1"
