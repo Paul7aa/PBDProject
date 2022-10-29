@@ -7,10 +7,12 @@
     xmlns:local="clr-namespace:PBDProject.Views"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:s="clr-namespace:System;assembly=mscorlib"
+    xmlns:validation="clr-namespace:PBDProject.Domain.ValidationRules"
     Title="Magazin Virtual"
-    Width="800"
+    Width="900"
     Height="600"
-    MinWidth="800"
+    MinWidth="900"
     MinHeight="600"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{materialDesign:MaterialDesignFont}"
@@ -18,6 +20,13 @@
     TextElement.FontWeight="Medium"
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style x:Key="WrappingTextBlock" TargetType="{x:Type TextBlock}">
+                <Setter Property="TextWrapping" Value="Wrap" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
     <materialDesign:DialogHost CloseOnClickAway="True" IsOpen="{Binding DialogHostOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
         <materialDesign:DialogHost.DialogContent>
             <Grid>
@@ -48,11 +57,14 @@
                         VerticalAlignment="Center"
                         Text="Nume" />
                     <TextBox
+                        x:Name="clientNume"
                         Grid.Row="1"
                         Grid.Column="2"
                         Width="150"
                         Margin="0,0,20,0"
                         VerticalAlignment="Center"
+                        materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
+                        MaxLength="30"
                         Text="{Binding NewClientNume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBlock
                         Grid.Row="2"
@@ -61,11 +73,14 @@
                         VerticalAlignment="Center"
                         Text="Prenume" />
                     <TextBox
+                        x:Name="clientPrenume"
                         Grid.Row="2"
                         Grid.Column="2"
                         Width="150"
                         Margin="0,30,20,0"
                         VerticalAlignment="Center"
+                        materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
+                        MaxLength="30"
                         Text="{Binding NewClientPrenume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBlock
                         Grid.Row="3"
@@ -74,13 +89,24 @@
                         VerticalAlignment="Center"
                         Text="Data Nașterii" />
                     <DatePicker
+                        x:Name="clientDatePicker"
                         Grid.Row="3"
                         Grid.Column="2"
                         Width="150"
                         Margin="0,30,20,0"
                         VerticalAlignment="Center"
-                        SelectedDate="{Binding NewClientDataNasterii, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedDateFormat="Short" />
+                        SelectedDateFormat="Short">
+                        <DatePicker.SelectedDate>
+                            <Binding
+                                Mode="TwoWay"
+                                Path="NewClientDataNasterii"
+                                UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:DataNasteriiValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </DatePicker.SelectedDate>
+                    </DatePicker>
 
                     <TextBlock
                         Grid.Row="4"
@@ -89,21 +115,221 @@
                         VerticalAlignment="Center"
                         Text="Număr Card" />
                     <TextBox
+                        x:Name="clientNrCard"
                         Grid.Row="4"
                         Grid.Column="2"
                         Width="150"
                         Margin="0,30,20,0"
                         VerticalAlignment="Center"
-                        Text="{Binding NewClientNumarCard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
+                        materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
+                        MaxLength="8">
+                        <TextBox.Text>
+                            <Binding
+                                Mode="TwoWay"
+                                Path="NewClientNumarCard"
+                                UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:NumarCardValidationRule ValidationStep="CommittedValue" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
                     <StackPanel
                         Grid.Row="5"
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
                         Margin="0,30,0,0"
                         Orientation="Horizontal">
-                        <Button Content="Adaugă" />
                         <Button
+                            Width="100"
+                            Command="{Binding AddClientCommand}"
+                            Content="Adaugă">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Path=(Validation.HasError), ElementName=clientDatePicker}" Value="False" />
+                                                <Condition Binding="{Binding Path=(Validation.HasError), ElementName=clientNrCard}" Value="False" />
+                                                <Condition Binding="{Binding Path=(Validation.HasError), ElementName=clientNume}" Value="False" />
+                                                <Condition Binding="{Binding Path=(Validation.HasError), ElementName=clientPrenume}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="IsEnabled" Value="True" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button
+                            Width="100"
+                            Margin="90,0,0,0"
+                            Command="{Binding CloseDialogHost}"
+                            Content="Anulează" />
+                    </StackPanel>
+                </Grid>
+                <Grid
+                    x:Name="AddProdusDialogHost"
+                    Margin="10,0,10,0"
+                    Visibility="{Binding AddProdusDialogHostOpen, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="20" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="20" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Text="Produs" />
+                    <TextBox
+                        x:Name="produs"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Width="150"
+                        Margin="0,0,20,0"
+                        VerticalAlignment="Center"
+                        materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
+                        MaxLength="50"
+                        Text="{Binding NewProdus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="0,30,10,0"
+                        VerticalAlignment="Center"
+                        Text="Descriere" />
+                    <TextBox
+                        x:Name="produsDescriere"
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Width="150"
+                        Height="80"
+                        Margin="0,30,20,0"
+                        VerticalAlignment="Stretch"
+                        materialDesign:TextFieldAssist.CharacterCounterVisibility="Visible"
+                        AcceptsReturn="True"
+                        MaxLength="80"
+                        Text="{Binding NewProdusDescriere, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto" />
+                    <TextBlock
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Margin="0,30,10,0"
+                        VerticalAlignment="Center"
+                        Text="Garanție(luni)" />
+                    <TextBox
+                        x:Name="produsGarantie"
+                        Grid.Row="3"
+                        Grid.Column="2"
+                        Width="150"
+                        Margin="0,30,20,0"
+                        VerticalAlignment="Center"
+                        MaxLength="10">
+                        <TextBox.Text>
+                            <Binding
+                                Mode="TwoWay"
+                                Path="NewProdusGarantie"
+                                UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:IntegerValidationRule MaxValue="120" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBlock
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Margin="0,30,10,0"
+                        VerticalAlignment="Center"
+                        Text="Stoc" />
+                    <TextBox
+                        x:Name="produsStoc"
+                        Grid.Row="4"
+                        Grid.Column="2"
+                        Width="150"
+                        Margin="0,30,20,0"
+                        VerticalAlignment="Center"
+                        MaxLength="10">
+                        <TextBox.Text>
+                            <Binding
+                                Mode="TwoWay"
+                                Path="NewProdusStoc"
+                                UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:IntegerValidationRule MaxValue="200" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBlock
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        Margin="0,30,10,0"
+                        VerticalAlignment="Center"
+                        Text="Valoare Unitară" />
+                    <TextBox
+                        x:Name="produsValoareUnitara"
+                        Grid.Row="5"
+                        Grid.Column="2"
+                        Width="150"
+                        Margin="0,30,20,0"
+                        VerticalAlignment="Center"
+                        MaxLength="10">
+                        <TextBox.Text>
+                            <Binding
+                                Mode="TwoWay"
+                                Path="NewProdusValoareUnitara"
+                                UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validation:DoubleValidationRule />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <StackPanel
+                        Grid.Row="6"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        Margin="0,30,0,0"
+                        Orientation="Horizontal">
+                        <Button
+                            Width="100"
+                            Command="{Binding AddProdusCommand}"
+                            Content="Adaugă">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Path=(Validation.HasError), ElementName=produsStoc}" Value="False" />
+                                                <Condition Binding="{Binding Path=(Validation.HasError), ElementName=produsGarantie}" Value="False" />
+                                                <Condition Binding="{Binding Path=(Validation.HasError), ElementName=produsValoareUnitara}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="IsEnabled" Value="True" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button
+                            Width="100"
                             Margin="90,0,0,0"
                             Command="{Binding CloseDialogHost}"
                             Content="Anulează" />
@@ -146,7 +372,7 @@
                                 Width="35"
                                 Height="35"
                                 Margin="20,0,0,20"
-                                Command="{Binding AddClientCommand}"
+                                Command="{Binding OpenAddClientDialogCommand}"
                                 CommandParameter="client"
                                 Content="{materialDesign:PackIcon Kind=PlusThick,
                                                                   Size=20}"
@@ -155,6 +381,7 @@
                                 Width="35"
                                 Height="35"
                                 Margin="20,0,0,20"
+                                Command="{Binding DeleteClientCommand}"
                                 Content="{materialDesign:PackIcon Kind=Delete,
                                                                   Size=20}"
                                 Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
@@ -172,23 +399,64 @@
                                 materialDesign:TextFieldAssist.HasClearButton="True"
                                 materialDesign:TextFieldAssist.UnderlineBrush="LightBlue"
                                 Foreground="White"
-                                Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding SearchTextClient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
 
                         <DataGrid
                             Grid.Row="2"
                             Grid.Column="1"
                             Grid.ColumnSpan="3"
-                            AutoGenerateColumns="True"
-                            AutoGeneratingColumn="DataGrid_AutoGeneratingColumn"
+                            AutoGenerateColumns="False"
                             BorderBrush="LightBlue"
                             BorderThickness="0.75"
                             CanUserDeleteRows="False"
                             CanUserReorderColumns="False"
                             CanUserResizeRows="False"
                             CanUserSortColumns="True"
+                            CellStyle="{StaticResource MaterialDesignDataGridCell}"
                             ItemsSource="{Binding ClientiList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Style="{StaticResource MaterialDesignDataGrid}" />
+                            SelectedItem="{Binding SelectedClient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectionMode="Single"
+                            SelectionUnit="FullRow">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Text="*" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn
+                                    Width="0.5*"
+                                    Binding="{Binding IdClient}"
+                                    Header="Id"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding Nume}"
+                                    Header="Nume"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding Prenume}"
+                                    Header="Prenume"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding DataNasterii, StringFormat=dd-MM-yyyy}"
+                                    Header="DataNașterii"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding NumarCard}"
+                                    Header="NumărCard"
+                                    IsReadOnly="True" />
+                            </DataGrid.Columns>
+                        </DataGrid>
 
                         <Button
                             Grid.Row="4"
@@ -220,40 +488,127 @@
                             <RowDefinition Height="20" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="20" />
                         </Grid.RowDefinitions>
 
-
-                        <DataGrid
+                        <StackPanel
                             Grid.Row="1"
                             Grid.Column="1"
+                            HorizontalAlignment="Left"
+                            Orientation="Horizontal">
+                            <Button
+                                Width="35"
+                                Height="35"
+                                Margin="20,0,0,20"
+                                Command="{Binding OpenAddProdusDialogCommand}"
+                                CommandParameter="produs"
+                                Content="{materialDesign:PackIcon Kind=PlusThick,
+                                                                  Size=20}"
+                                Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
+                            <Button
+                                Width="35"
+                                Height="35"
+                                Margin="20,0,0,20"
+                                Command="{Binding DeleteProdusCommand}"
+                                Content="{materialDesign:PackIcon Kind=Delete,
+                                                                  Size=20}"
+                                Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
+                        </StackPanel>
+
+                        <StackPanel
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                            <TextBox
+                                Width="200"
+                                Margin="0,0,30,20"
+                                materialDesign:HintAssist.HelperText="Search"
+                                materialDesign:TextFieldAssist.HasClearButton="True"
+                                materialDesign:TextFieldAssist.UnderlineBrush="LightBlue"
+                                Foreground="White"
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding SearchTextProdus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+
+                        <DataGrid
+                            Grid.Row="2"
+                            Grid.Column="1"
                             Grid.ColumnSpan="3"
+                            AutoGenerateColumns="False"
                             BorderBrush="LightBlue"
                             BorderThickness="0.75"
-                            Style="{StaticResource MaterialDesignDataGrid}">
+                            CanUserDeleteRows="False"
+                            CanUserReorderColumns="False"
+                            CanUserResizeRows="False"
+                            CanUserSortColumns="True"
+                            CellStyle="{StaticResource MaterialDesignDataGridCell}"
+                            ItemsSource="{Binding ProduseList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding SelectedProdus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectionMode="Single"
+                            SelectionUnit="FullRow">
                             <DataGrid.Columns>
-                                <DataGridTemplateColumn Width="*" Header="IdProdus">
+                                <DataGridTemplateColumn>
                                     <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate />
+                                        <DataTemplate>
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Text="*" />
+                                        </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Width="*" Header="Produs" />
-                                <DataGridTemplateColumn Width="*" Header="Garanție" />
-                                <DataGridTemplateColumn Width="*" Header="Stoc" />
-                                <DataGridTemplateColumn Width="*" Header="ValoareUnitară" />
+                                <DataGridTextColumn
+                                    Width="0.5*"
+                                    Binding="{Binding IdProdus}"
+                                    Header="Id"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding Produs}"
+                                    Header="Produs"
+                                    IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style BasedOn="{StaticResource WrappingTextBlock}" TargetType="TextBlock" />
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn
+                                    Width="2*"
+                                    Binding="{Binding Descriere}"
+                                    Header="Descriere"
+                                    IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style BasedOn="{StaticResource WrappingTextBlock}" TargetType="TextBlock" />
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding Garantie}"
+                                    Header="Garanție"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="0.5*"
+                                    Binding="{Binding Stoc}"
+                                    Header="Stoc"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding ValoareUnitara}"
+                                    Header="ValoareUnitară"
+                                    IsReadOnly="True" />
                             </DataGrid.Columns>
                         </DataGrid>
-
                         <Button
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="1"
                             Width="200"
                             Content="Raport garanții valabile"
                             Style="{StaticResource MaterialDesignFlatMidBgButton}" />
 
                         <Button
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="3"
                             Width="200"
                             Content="Afișare top-client"
