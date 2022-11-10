@@ -15,7 +15,7 @@ namespace PBDProject.Models
         Byte _stoc;
         Double _valoareUnitara;
         
-        public ProdusModel(Int32 idProdus, string produs, string descriere, Byte garantie, Byte stoc, Double valoareUnitara)
+        public ProdusModel(Int32 idProdus, String produs, String descriere, Byte garantie, Byte stoc, Double valoareUnitara)
         {
             _idProdus = idProdus;
             _produs = produs;

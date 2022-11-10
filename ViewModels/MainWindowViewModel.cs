@@ -20,12 +20,15 @@ namespace PBDProject.ViewModels
         private String _sqlConnectionString = @"Data Source=DESKTOP-IVVHEO0\SQLEXPRESS;Initial Catalog=MagazinElectronice;Integrated Security=True";
         private ObservableCollection<ClientModel> _clientiList = new ObservableCollection<ClientModel>();
         private ObservableCollection<ProdusModel> _produseList = new ObservableCollection<ProdusModel>();
+        private ObservableCollection<VanzareModel> _vanzariList = new ObservableCollection<VanzareModel>();
         private ClientModel _selectedClient;
         private ProdusModel _selectedProdus;
+        private VanzareModel _selectedVanzare;
 
         private Boolean _dialogHostOpen = false;
         private Boolean _addClientDialogHostOpen = false;
         private Boolean _addProdusDialogHostOpen = false;
+        private Boolean _addVanzareDialogHostOpen = false;
 
         //new client 
         private String _newClientNume = "";
@@ -40,14 +43,24 @@ namespace PBDProject.ViewModels
         private String _newProdusStoc = "";
         private String _newProdusValoareUnitara = "";
 
+        //new vanzare
+        private ClientModel _selectedBuyer = null;
+        private ProdusModel _selectedPurchase = null;
+        ObservableCollection<PurchaseModel> _purchaseModels = new ObservableCollection<PurchaseModel>();
+        private Byte _purchaseCantitate = 0;
+
+
         private String _searchTextClient;
         private String _searchTextProdus;
+        private String _searchTextVanzare;
+
         public MainWindowViewModel()
         {
             _sqlConnection = new SqlConnection(_sqlConnectionString);
             _sqlConnection.Open();
             RefreshClientData();
             RefreshProdusData();
+            RefreshVanzareData();
         }
 
         public ObservableCollection<ClientModel> ClientiList
@@ -80,6 +93,21 @@ namespace PBDProject.ViewModels
             }
         }
 
+        public ObservableCollection<VanzareModel> VanzariList
+        {
+            get
+            {
+                if (_vanzariList == null)
+                    _vanzariList = new ObservableCollection<VanzareModel>();
+                return _vanzariList ;
+            }
+            set
+            {
+                _vanzariList = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ClientModel SelectedClient
         {
             get => _selectedClient;
@@ -100,6 +128,15 @@ namespace PBDProject.ViewModels
             }
         }
 
+        public VanzareModel SelectedVanzare
+        {
+            get => _selectedVanzare;
+            set
+            {
+                _selectedVanzare = value;
+                OnPropertyChanged();
+            }
+        }
         public Boolean DialogHostOpen
         {
             get => _dialogHostOpen;
@@ -126,6 +163,16 @@ namespace PBDProject.ViewModels
             set
             {
                 _addProdusDialogHostOpen = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Boolean AddVanzareDialogHostOpen
+        {
+            get => _addVanzareDialogHostOpen;
+            set
+            {
+                _addVanzareDialogHostOpen = value;
                 OnPropertyChanged();
             }
         }
@@ -220,6 +267,53 @@ namespace PBDProject.ViewModels
             }
         }
 
+        public ClientModel SelectedBuyer
+        {
+            get => _selectedBuyer;
+            set
+            {
+                _selectedBuyer = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ProdusModel SelectedPurchase
+        {
+            get => _selectedPurchase;
+            set
+            {
+                _selectedPurchase = value;
+                PurchaseCantitate = 0;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<PurchaseModel> PurchaseModels
+        {
+            get
+            {
+                if (_purchaseModels == null)
+                    _purchaseModels = new ObservableCollection<PurchaseModel>();
+                return _purchaseModels;
+            }
+            set
+            {
+                _purchaseModels =value;
+                OnPropertyChanged();
+            }
+            
+        }
+
+        public Byte PurchaseCantitate
+        {
+            get => _purchaseCantitate;
+            set
+            {
+                _purchaseCantitate = value;
+                OnPropertyChanged();
+            }
+        }
+
         public String SearchTextClient
         {
             get => _searchTextClient;
@@ -244,6 +338,21 @@ namespace PBDProject.ViewModels
                 if (!String.IsNullOrEmpty(_searchTextProdus))
                     ProduseList = new ObservableCollection<ProdusModel>(ProduseList
                         .Where(x => x.Produs.ToLower().Contains(_searchTextProdus.Trim().ToLower())).ToList());
+                OnPropertyChanged();
+            }
+        }
+
+        public String SearchTextVanzare
+        {
+            get => _searchTextVanzare;
+            set
+            {
+                _searchTextVanzare = value;
+                RefreshVanzareData();
+                if (!String.IsNullOrEmpty(_searchTextVanzare))
+                    VanzariList = new ObservableCollection<VanzareModel>(VanzariList
+                        .Where(x => x.Produs.ToLower().Contains(_searchTextVanzare.Trim().ToLower())
+                        || x.NumeClient.ToLower().Contains(_searchTextVanzare.Trim().ToLower())).ToList());
                 OnPropertyChanged();
             }
         }

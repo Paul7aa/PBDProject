@@ -8,6 +8,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:s="clr-namespace:System;assembly=mscorlib"
+    xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:validation="clr-namespace:PBDProject.Domain.ValidationRules"
     Title="Magazin Virtual"
     Width="900"
@@ -25,9 +26,19 @@
             <Style x:Key="WrappingTextBlock" TargetType="{x:Type TextBlock}">
                 <Setter Property="TextWrapping" Value="Wrap" />
             </Style>
+            <CollectionViewSource x:Key="ProduseListViewSource" Source="{Binding Path=ProduseList}">
+                <CollectionViewSource.SortDescriptions>
+                    <scm:SortDescription PropertyName="Produs" />
+                </CollectionViewSource.SortDescriptions>
+            </CollectionViewSource>
+            <CollectionViewSource x:Key="ClientiListViewSource" Source="{Binding Path=ClientiList}">
+                <CollectionViewSource.SortDescriptions>
+                    <scm:SortDescription PropertyName="Nume" />
+                </CollectionViewSource.SortDescriptions>
+            </CollectionViewSource>
         </ResourceDictionary>
     </Window.Resources>
-    <materialDesign:DialogHost CloseOnClickAway="True" IsOpen="{Binding DialogHostOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+    <materialDesign:DialogHost CloseOnClickAway="False" IsOpen="{Binding DialogHostOpen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
         <materialDesign:DialogHost.DialogContent>
             <Grid>
                 <Grid
@@ -321,6 +332,259 @@
                                                 <Condition Binding="{Binding Path=(Validation.HasError), ElementName=produsGarantie}" Value="False" />
                                                 <Condition Binding="{Binding Path=(Validation.HasError), ElementName=produsValoareUnitara}" Value="False" />
                                             </MultiDataTrigger.Conditions>
+                                            <Setter Property="IsEnabled" Value="True" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button
+                            Width="100"
+                            Margin="90,0,0,0"
+                            Command="{Binding CloseDialogHost}"
+                            Content="Anulează" />
+                    </StackPanel>
+                </Grid>
+                <Grid
+                    x:Name="AddVanzareDialogHost"
+                    Margin="10,0,10,0"
+                    Visibility="{Binding AddVanzareDialogHostOpen, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="20" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="20" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="10,20,10,10"
+                        VerticalAlignment="Center"
+                        Text="IdClient" />
+
+                    <ComboBox
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Width="100"
+                        Margin="10,20,10,10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding ClientiList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding SelectedBuyer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock HorizontalAlignment="Center" Text="{Binding IdClient, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="10,20,10,10"
+                        VerticalAlignment="Center"
+                        Text="Nume" />
+
+                    <ComboBox
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Width="200"
+                        Margin="10,20,10,10"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding Source={StaticResource ClientiListViewSource}}"
+                        SelectedItem="{Binding SelectedBuyer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    Text="{Binding Nume, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <Separator
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="5"
+                        Margin="0,30,0,0" />
+
+                    <TextBlock
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Margin="10,20,10,10"
+                        VerticalAlignment="Center"
+                        Text="IdProdus" />
+
+
+                    <ComboBox
+                        Grid.Row="4"
+                        Grid.Column="2"
+                        Width="100"
+                        Margin="10,20,10,10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding ProduseList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectedItem="{Binding SelectedPurchase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock HorizontalAlignment="Center" Text="{Binding IdProdus, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <TextBlock
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        Margin="10,20,10,10"
+                        VerticalAlignment="Center"
+                        Text="Produs" />
+
+                    <ComboBox
+                        Grid.Row="5"
+                        Grid.Column="2"
+                        Width="200"
+                        Margin="0,20,10,10"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding Source={StaticResource ProduseListViewSource}}"
+                        SelectedItem="{Binding SelectedPurchase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    Text="{Binding Produs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <StackPanel
+                        Grid.Row="6"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        Margin="0,20,10,0"
+                        Orientation="Horizontal">
+
+                        <TextBlock
+                            Grid.Row="6"
+                            Grid.Column="1"
+                            Margin="10,0,20,0"
+                            VerticalAlignment="Center"
+                            Text="Cantitate" />
+
+                        <TextBox
+                            Width="100"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center">
+                            <TextBox.Resources>
+                                <validation:BindingProxy x:Key="proxy" Data="{Binding}" />
+                            </TextBox.Resources>
+                            <TextBox.Text>
+                                <Binding
+                                    Mode="TwoWay"
+                                    Path="PurchaseCantitate"
+                                    UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validation:CantitateValidationRule>
+                                            <validation:CantitateValidationRule.CantitateMax>
+                                                <validation:Wrapper CantitateMax="{Binding Data.SelectedPurchase.Stoc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Source={StaticResource proxy}}" />
+                                            </validation:CantitateValidationRule.CantitateMax>
+                                        </validation:CantitateValidationRule>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Button
+                            Width="35"
+                            Height="35"
+                            Margin="20,0,0,0"
+                            VerticalAlignment="Center"
+                            Command="{Binding AddSelectedPurchaseCommand}"
+                            Content="{materialDesign:PackIcon Kind=Add,
+                                                              Size=30}"
+                            Style="{StaticResource MaterialDesignFloatingActionButton}" />
+                    </StackPanel>
+
+                    <Border
+                        Grid.Row="7"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        Margin="0,20,0,0"
+                        BorderBrush="LightBlue"
+                        BorderThickness="1">
+                        <DataGrid
+                            Height="150"
+                            AutoGenerateColumns="False"
+                            BorderThickness="0.75"
+                            CanUserDeleteRows="False"
+                            CanUserReorderColumns="False"
+                            CanUserResizeColumns="False"
+                            CanUserResizeRows="False"
+                            CanUserSortColumns="False"
+                            CellStyle="{StaticResource MaterialDesignDataGridCell}"
+                            ItemsSource="{Binding PurchaseModels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectionMode="Single"
+                            SelectionUnit="FullRow">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn
+                                    Width="200"
+                                    Binding="{Binding Path=Produs.Produs}"
+                                    Header="Produs"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="Auto"
+                                    Binding="{Binding Path=Cantitate}"
+                                    Header="Nr."
+                                    IsReadOnly="True" />
+                                <DataGridTemplateColumn Width="Auto">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button
+                                                Width="30"
+                                                Height="30"
+                                                HorizontalAlignment="Right"
+                                                Command="{Binding DataContext.RemovePurchaseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                                CommandParameter="{Binding Path=Produs.IdProdus}"
+                                                Content="{materialDesign:PackIcon Kind=RemoveBold,
+                                                                                  Size=20}"
+                                                Style="{StaticResource MaterialDesignFloatingActionButton}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+
+                    <StackPanel
+                        Grid.Row="8"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        Margin="0,30,0,0"
+                        Orientation="Horizontal">
+                        <Button
+                            Width="100"
+                            Command="{Binding AddVanzareCommand}"
+                            Content="Adaugă">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions />
                                             <Setter Property="IsEnabled" Value="True" />
                                         </MultiDataTrigger>
                                     </Style.Triggers>
@@ -629,25 +893,135 @@
                             <RowDefinition Height="20" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="20" />
                         </Grid.RowDefinitions>
 
-                        <DataGrid Style="{StaticResource MaterialDesignDataGrid}" />
+                        <StackPanel
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            HorizontalAlignment="Left"
+                            Orientation="Horizontal">
+                            <Button
+                                Width="35"
+                                Height="35"
+                                Margin="20,0,0,20"
+                                Command="{Binding OpenAddVanzareDialogCommand}"
+                                CommandParameter="vanzare"
+                                Content="{materialDesign:PackIcon Kind=PlusThick,
+                                                                  Size=20}"
+                                Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
+                            <Button
+                                Width="35"
+                                Height="35"
+                                Margin="20,0,0,20"
+                                Command="{Binding DeleteVanzareCommand}"
+                                Content="{materialDesign:PackIcon Kind=Delete,
+                                                                  Size=20}"
+                                Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
+                        </StackPanel>
+
+                        <StackPanel
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                            <TextBox
+                                Width="200"
+                                Margin="0,0,30,20"
+                                materialDesign:HintAssist.HelperText="Search"
+                                materialDesign:TextFieldAssist.HasClearButton="True"
+                                materialDesign:TextFieldAssist.UnderlineBrush="LightBlue"
+                                Foreground="White"
+                                Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                Text="{Binding SearchTextVanzare, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+
+                        <DataGrid
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="3"
+                            AutoGenerateColumns="False"
+                            BorderBrush="LightBlue"
+                            BorderThickness="0.75"
+                            CanUserDeleteRows="False"
+                            CanUserReorderColumns="False"
+                            CanUserResizeRows="False"
+                            CanUserSortColumns="True"
+                            CellStyle="{StaticResource MaterialDesignDataGridCell}"
+                            ItemsSource="{Binding VanzariList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedItem="{Binding SelectedVanzare, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectionMode="Single"
+                            SelectionUnit="FullRow">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Text="*" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn
+                                    Width="0.5*"
+                                    Binding="{Binding IdVanzare}"
+                                    Header="Id"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="0.5*"
+                                    Binding="{Binding IdProdus}"
+                                    Header="IdP"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="1.2*"
+                                    Binding="{Binding Produs}"
+                                    Header="Produs"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="0.5*"
+                                    Binding="{Binding IdClient}"
+                                    Header="IdC"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="1.2*"
+                                    Binding="{Binding NumeClient}"
+                                    Header="NumeC"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding Cantitate}"
+                                    Header="Cantitate"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding DataVanzarii, StringFormat=dd-MM-yyyy}"
+                                    Header="DataVânzării"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Width="*"
+                                    Binding="{Binding DataExpirarii, StringFormat=dd-MM-yyyy}"
+                                    Header="DataExpirării"
+                                    IsReadOnly="True" />
+                            </DataGrid.Columns>
+                        </DataGrid>
 
                         <Button
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="1"
                             Width="200"
                             Content="Generare Raport"
                             Style="{StaticResource MaterialDesignFlatMidBgButton}" />
 
                         <Button
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="3"
                             Width="200"
                             Content="Afișare top-client"
                             Style="{StaticResource MaterialDesignFlatMidBgButton}" />
+
                     </Grid>
                 </TabItem>
 

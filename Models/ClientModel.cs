@@ -14,7 +14,7 @@ namespace PBDProject.Models
         public DateTime _dataNasterii;
         public String _numarCard;
 
-        public ClientModel(Int32 idClient, string nume, string prenume, DateTime dataNasterii, string numarCard)
+        public ClientModel(Int32 idClient, String nume, String prenume, DateTime dataNasterii, String numarCard)
         {
             _idClient = idClient;
             _nume = nume;

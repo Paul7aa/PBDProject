@@ -38,7 +38,8 @@ namespace PBDProject.ViewModels
                 }
 
                 sqlDataReader.Close();
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 ShowError("Eroare actualizare clienti: " + ex.Message);
             }
@@ -65,36 +66,58 @@ namespace PBDProject.ViewModels
 
                 sqlDataReader.Close();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ShowError("Eroare actualizare produse: " + ex.Message);
             }
         }
 
+        private void RefreshVanzareData()
+        {
+            try
+            {
+                VanzariList.Clear();
+                //refresh VanzariTable
+                CreateSqlCommand("select * from [Vanzari]");
+                _sqlCommand.ExecuteNonQuery();
+                SqlDataReader sqlDataReader = _sqlCommand.ExecuteReader();
+
+                while (sqlDataReader.Read())
+                {
+                    VanzareModel vanzareModel = new VanzareModel((int)sqlDataReader["IdVanzare"], (int)sqlDataReader["IdProdus"], (int)sqlDataReader["IdClient"],
+                        (Byte)sqlDataReader["Cantitate"], ((DateTime)sqlDataReader["DataVanzarii"]).Date, ((DateTime)sqlDataReader["DataExpirarii"]).Date);
+                    vanzareModel.NumeClient = ClientiList.Where(x => x.IdClient == vanzareModel.IdClient)?.FirstOrDefault()?.Nume;
+                    vanzareModel.Produs = ProduseList.Where(x => x.IdProdus == vanzareModel.IdProdus)?.FirstOrDefault()?.Produs;
+
+                    VanzariList.Add(vanzareModel);
+                }
+
+                sqlDataReader.Close();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Eroare actualizare produse: " + ex.Message);
+            }
+        }
+
+        public void RefreshAllData()
+        {
+            RefreshClientData();
+            RefreshProdusData();
+            RefreshVanzareData();
+        }
         private void AddClientToTable(string nume, string prenume, DateTime dataNasterii, string nrcard)
         {
             try
             {
-                CreateSqlCommand("insert into clienti(Nume, Prenume, DataNasterii, NumarCard) values ('" + nume + "','" + prenume + "','" + dataNasterii.Date.ToString() + "','" + nrcard + "')");
-                _sqlCommand.ExecuteNonQuery();
-                RefreshClientData();
-            }catch(Exception ex)
-            {
-                ShowError("Eroare adaugare client: " + ex.Message);
-            }
-        }
-
-        private void DeleteClientFromTable()
-        {
-            try
-            {
-                CreateSqlCommand("delete from clienti where IdClient = " + SelectedClient.IdClient);
+                CreateSqlCommand("insert into [Clienti](Nume, Prenume, DataNasterii, NumarCard) values" +
+                    "('" + nume + "','" + prenume + "','" + dataNasterii.Date.ToString() + "','" + nrcard + "')");
                 _sqlCommand.ExecuteNonQuery();
                 RefreshClientData();
             }
             catch (Exception ex)
             {
-                ShowError("Eroare stergere client: " + ex.Message);
+                ShowError("Eroare adăugare client: " + ex.Message);
             }
         }
 
@@ -102,14 +125,50 @@ namespace PBDProject.ViewModels
         {
             try
             {
-                ShowError("insert into produse(Produs, Descriere, Garantie, Stoc, ValoareUnitara) values ('" + produs + "','" + descriere + "'," + garantie + "," + stoc + "," + valoareUnitara + ")");
-                CreateSqlCommand("insert into produse(Produs, Descriere, Garantie, Stoc, ValoareUnitara) values ('" + produs + "','" + descriere + "'," + garantie + "," + stoc + "," + valoareUnitara +")");
+                CreateSqlCommand("insert into [Produse](Produs, Descriere, Garantie, Stoc, ValoareUnitara) values" +
+                    "('" + produs + "','" + descriere + "'," + garantie + "," + stoc + "," + valoareUnitara + ")");
                 _sqlCommand.ExecuteNonQuery();
                 RefreshProdusData();
             }
             catch (Exception ex)
             {
-                ShowError("Eroare adaugare client: " + ex.Message);
+                ShowError("Eroare adăugare produs: " + ex.Message);
+            }
+        }
+
+        private void AddVanzareToTable(ClientModel selectedBuyer)
+        {
+            try
+            {
+                foreach (var purchase in PurchaseModels)
+                {
+                    // public VanzareModel(Int32 idVanzare, Int32 idProdus, Int32 idClient, Byte cantitate, DateTime dataVanzarii, DateTime dataExpirarii)
+                    CreateSqlCommand("insert into [Vanzari](IdProdus, IdClient, Cantitate, DataVanzarii, DataExpirarii) values" +
+                        "(" + purchase.Produs.IdProdus + "," + selectedBuyer.IdClient + "," + purchase.Cantitate + ",'" + DateTime.Now.Date.ToString() +"','" +
+                        DateTime.Now.AddMonths(purchase.Produs.Garantie) + "')");
+                    _sqlCommand.ExecuteNonQuery();
+                    RefreshProdusData();
+                    RefreshVanzareData();
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError("Eroare adăugare vânzare: " + ex.Message);
+            }
+
+        }
+
+        private void DeleteClientFromTable()
+        {
+            try
+            {
+                CreateSqlCommand("delete from [Clienti] where IdClient = " + SelectedClient.IdClient);
+                _sqlCommand.ExecuteNonQuery();
+                RefreshClientData();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Eroare ștergere client: " + ex.Message);
             }
         }
 
@@ -117,13 +176,27 @@ namespace PBDProject.ViewModels
         {
             try
             {
-                CreateSqlCommand("delete from produse where IdProdus = " + SelectedProdus.IdProdus);
+                CreateSqlCommand("delete from [Produse] where IdProdus = " + SelectedProdus.IdProdus);
                 _sqlCommand.ExecuteNonQuery();
                 RefreshProdusData();
             }
             catch (Exception ex)
             {
-                ShowError("Eroare stergere client: " + ex.Message);
+                ShowError("Eroare ștergere produs: " + ex.Message);
+            }
+        }
+
+        private void DeleteVanzareFromTable()
+        {
+            try
+            {
+                CreateSqlCommand("delete from [Vanzari] where IdVanzare = " + SelectedVanzare.IdVanzare);
+                _sqlCommand.ExecuteNonQuery();
+                RefreshVanzareData();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Eroare ștergere vânzare: " + ex.Message);
             }
         }
 
