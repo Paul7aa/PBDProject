@@ -29,6 +29,7 @@ namespace PBDProject.ViewModels
         private ICommand _deleteVanzareCommand;
         private ICommand _addSelectedPurchaseCommand;
         private ICommand _removePurchaseCommand;
+        private ICommand _raportPersoanaCommand;
 
         public ICommand CloseDialogHost
         {
@@ -159,6 +160,17 @@ namespace PBDProject.ViewModels
             }
         }
 
+        public ICommand RaportPersoanaCommand
+        {
+            get
+            {
+                if (_raportPersoanaCommand == null)
+                    _raportPersoanaCommand = new RelayCommand((_) => RaportPersoanaOnClick(),
+                        (_) => SelectedClient != null);
+                return _raportPersoanaCommand;
+            }
+        }
+
         private void OpenDialogHost(object param)
         {
             try
@@ -167,6 +179,7 @@ namespace PBDProject.ViewModels
                 AddClientDialogHostOpen = (dialogType == "client") ? true : false;
                 AddProdusDialogHostOpen = (dialogType == "produs") ? true : false;
                 AddVanzareDialogHostOpen = (dialogType == "vanzare") ? true : false;
+                RaportClientDialogHostOpen = (dialogType == "raportclient") ? true : false;
                 DialogHostOpen = true;
             }
             catch (Exception ex)
@@ -298,6 +311,13 @@ namespace PBDProject.ViewModels
                 ShowError(MethodBase.GetCurrentMethod().Name + "Error: " + ex.Message);
             }
         }
+
+        public void RaportPersoanaOnClick()
+        {
+            GenerateClientReport();
+            OpenDialogHost("raportclient");
+        }
+
         private bool CanExecuteAddClient()
         {
             return !String.IsNullOrEmpty(NewClientPrenume) && !String.IsNullOrEmpty(NewClientNume) && !String.IsNullOrEmpty(NewClientNumarCard);

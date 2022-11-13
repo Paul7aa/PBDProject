@@ -599,6 +599,101 @@
                             Content="Anulează" />
                     </StackPanel>
                 </Grid>
+
+                <Grid
+                    x:Name="RaportClientDialogHost"
+                    Margin="10,0,10,0"
+                    Visibility="{Binding RaportClientDialogHostOpen, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="70" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="100" />
+                        <RowDefinition Height="10" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="10" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <TextBlock FontSize="20" Text="Raport" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            FontSize="20"
+                            Text="{Binding SelectedClient.Nume, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            FontSize="20"
+                            Text="{Binding SelectedClient.Prenume, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <DataGrid
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Width="600"
+                        Height="400"
+                        AutoGenerateColumns="False"
+                        BorderBrush="LightBlue"
+                        BorderThickness="0.75"
+                        CanUserDeleteRows="False"
+                        CanUserReorderColumns="False"
+                        CanUserResizeRows="False"
+                        CanUserSortColumns="True"
+                        CellStyle="{StaticResource MaterialDesignDataGridCell}"
+                        ItemsSource="{Binding RaportClient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectionMode="Single"
+                        SelectionUnit="FullRow">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Nume}"
+                                Header="Nume"
+                                IsReadOnly="True" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Prenume}"
+                                Header="Prenume"
+                                IsReadOnly="True" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Produs}"
+                                Header="Produs"
+                                IsReadOnly="True" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Cantitate}"
+                                Header="Cantitate"
+                                IsReadOnly="True" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding ValoareUnitara}"
+                                Header="ValoareUnitară"
+                                IsReadOnly="True" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding ValoareTotala}"
+                                Header="ValoareTotală"
+                                IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Width="100"
+                        HorizontalAlignment="Right"
+                        Command="{Binding CloseDialogHost}"
+                        Content="Închide" />
+
+                </Grid>
             </Grid>
         </materialDesign:DialogHost.DialogContent>
         <Grid>
@@ -726,6 +821,7 @@
                             Grid.Row="4"
                             Grid.Column="1"
                             Width="200"
+                            Command="{Binding RaportPersoanaCommand}"
                             Content="Raport persoană"
                             Style="{StaticResource MaterialDesignFlatMidBgButton}" />
 

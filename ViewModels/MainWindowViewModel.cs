@@ -21,6 +21,7 @@ namespace PBDProject.ViewModels
         private ObservableCollection<ClientModel> _clientiList = new ObservableCollection<ClientModel>();
         private ObservableCollection<ProdusModel> _produseList = new ObservableCollection<ProdusModel>();
         private ObservableCollection<VanzareModel> _vanzariList = new ObservableCollection<VanzareModel>();
+        private ObservableCollection<RaportClientRowModel> _raportClient = new ObservableCollection<RaportClientRowModel>();
         private ClientModel _selectedClient;
         private ProdusModel _selectedProdus;
         private VanzareModel _selectedVanzare;
@@ -29,6 +30,7 @@ namespace PBDProject.ViewModels
         private Boolean _addClientDialogHostOpen = false;
         private Boolean _addProdusDialogHostOpen = false;
         private Boolean _addVanzareDialogHostOpen = false;
+        private Boolean _raportClientDialogHostOpen = false;
 
         //new client 
         private String _newClientNume = "";
@@ -108,6 +110,38 @@ namespace PBDProject.ViewModels
             }
         }
 
+        public ObservableCollection<PurchaseModel> PurchaseModels
+        {
+            get
+            {
+                if (_purchaseModels == null)
+                    _purchaseModels = new ObservableCollection<PurchaseModel>();
+                return _purchaseModels;
+            }
+            set
+            {
+                _purchaseModels = value;
+                OnPropertyChanged();
+            }
+
+        }
+
+        public ObservableCollection<RaportClientRowModel> RaportClient
+        {
+            get
+            {
+                if (_raportClient == null)
+                    _raportClient = new ObservableCollection<RaportClientRowModel>();
+                return _raportClient;
+            }
+            set
+            {
+                _raportClient = value;
+                OnPropertyChanged();
+            }
+
+        }
+
         public ClientModel SelectedClient
         {
             get => _selectedClient;
@@ -173,6 +207,16 @@ namespace PBDProject.ViewModels
             set
             {
                 _addVanzareDialogHostOpen = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Boolean RaportClientDialogHostOpen
+        {
+            get => _raportClientDialogHostOpen;
+            set
+            {
+                _raportClientDialogHostOpen = value;
                 OnPropertyChanged();
             }
         }
@@ -286,22 +330,6 @@ namespace PBDProject.ViewModels
                 PurchaseCantitate = 0;
                 OnPropertyChanged();
             }
-        }
-
-        public ObservableCollection<PurchaseModel> PurchaseModels
-        {
-            get
-            {
-                if (_purchaseModels == null)
-                    _purchaseModels = new ObservableCollection<PurchaseModel>();
-                return _purchaseModels;
-            }
-            set
-            {
-                _purchaseModels =value;
-                OnPropertyChanged();
-            }
-            
         }
 
         public Byte PurchaseCantitate

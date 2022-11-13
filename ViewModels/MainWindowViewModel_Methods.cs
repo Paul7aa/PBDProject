@@ -20,6 +20,19 @@ namespace PBDProject.ViewModels
             _sqlCommand.CommandType = CommandType.Text;
             _sqlCommand.CommandText = cmdText;
         }
+
+        private void CreateSqlProcedure(string procedureName, List<SqlParameter> parameters = null)
+        {
+            _sqlCommand = _sqlConnection.CreateCommand();
+            _sqlCommand.CommandType = CommandType.StoredProcedure;
+            _sqlCommand.CommandText = procedureName;
+            if (parameters != null)
+            {
+                foreach (var param in parameters)
+                    _sqlCommand.Parameters.Add(param);
+            }
+        }
+
         private void RefreshClientData()
         {
             try
@@ -140,16 +153,38 @@ namespace PBDProject.ViewModels
         {
             try
             {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("produsID", typeof(int));
+                dt.Columns.Add("garantie", typeof(byte));
+                dt.Columns.Add("cantitate", typeof(byte));
                 foreach (var purchase in PurchaseModels)
                 {
-                    // public VanzareModel(Int32 idVanzare, Int32 idProdus, Int32 idClient, Byte cantitate, DateTime dataVanzarii, DateTime dataExpirarii)
-                    CreateSqlCommand("insert into [Vanzari](IdProdus, IdClient, Cantitate, DataVanzarii, DataExpirarii) values" +
-                        "(" + purchase.Produs.IdProdus + "," + selectedBuyer.IdClient + "," + purchase.Cantitate + ",'" + DateTime.Now.Date.ToString() +"','" +
-                        DateTime.Now.AddMonths(purchase.Produs.Garantie) + "')");
-                    _sqlCommand.ExecuteNonQuery();
-                    RefreshProdusData();
-                    RefreshVanzareData();
+                    DataRow dataRow = dt.NewRow();
+                    dataRow["produsID"] = purchase.Produs.IdProdus;
+                    dataRow["garantie"] = purchase.Produs.Garantie;
+                    dataRow["cantitate"] = purchase.Cantitate;
+                    dt.Rows.Add(dataRow);
                 }
+
+                List<SqlParameter> sqlParameters = new List<SqlParameter>();
+
+                SqlParameter clientIdParameter = new SqlParameter("@ClientId", SqlDbType.Int) 
+                {
+                    Value = selectedBuyer.IdClient 
+                };
+                sqlParameters.Add(clientIdParameter);
+                SqlParameter produseVanduteParameter = new SqlParameter("@ProduseVandute", SqlDbType.Structured)
+                {
+                    TypeName = "dbo.ProduseVanduteType",
+                    Value = dt
+                };
+                sqlParameters.Add(produseVanduteParameter);
+
+                CreateSqlProcedure("AdaugaVanzari", sqlParameters);
+                _sqlCommand.ExecuteNonQuery();
+
+                RefreshProdusData();
+                RefreshVanzareData();
             }
             catch (Exception ex)
             {
@@ -197,6 +232,40 @@ namespace PBDProject.ViewModels
             catch (Exception ex)
             {
                 ShowError("Eroare ștergere vânzare: " + ex.Message);
+            }
+        }
+
+        private void GenerateClientReport()
+        {
+            try
+            {
+                RaportClient.Clear();
+                SqlParameter sqlParameter = new SqlParameter("@ClientID", SqlDbType.Int)
+                {
+                    Value = SelectedClient.IdClient
+                };
+                CreateSqlProcedure("RaportPersoana", new List<SqlParameter>() { sqlParameter });
+                _sqlCommand.ExecuteNonQuery();
+
+                CreateSqlCommand("SELECT * FROM ##RaportPersoanaTable");
+                _sqlCommand.ExecuteNonQuery();
+                SqlDataReader sqlDataReader = _sqlCommand.ExecuteReader();
+                
+                
+                while (sqlDataReader.Read())
+                {
+                    RaportClientRowModel raportRowModel = new RaportClientRowModel((string)sqlDataReader["Nume"], (string)sqlDataReader["Prenume"], (string)sqlDataReader["Produs"],
+                        (Byte)sqlDataReader["Cantitate"], (Double)sqlDataReader["ValoareUnitara"], (Double)sqlDataReader["ValoareTotala"]);
+
+                    RaportClient.Add(raportRowModel);
+                }
+
+                sqlDataReader.Close();
+
+            }
+            catch(Exception ex)
+            {
+                ShowError("Eroare generare raport client: " + ex.Message);
             }
         }
 
