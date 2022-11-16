@@ -22,6 +22,7 @@ namespace PBDProject.ViewModels
         private ObservableCollection<ProdusModel> _produseList = new ObservableCollection<ProdusModel>();
         private ObservableCollection<VanzareModel> _vanzariList = new ObservableCollection<VanzareModel>();
         private ObservableCollection<RaportClientRowModel> _raportClient = new ObservableCollection<RaportClientRowModel>();
+        private ObservableCollection<VanzareModel> _produseGarantiiValide = new ObservableCollection<VanzareModel>();
         private ClientModel _selectedClient;
         private ProdusModel _selectedProdus;
         private VanzareModel _selectedVanzare;
@@ -31,6 +32,9 @@ namespace PBDProject.ViewModels
         private Boolean _addProdusDialogHostOpen = false;
         private Boolean _addVanzareDialogHostOpen = false;
         private Boolean _raportClientDialogHostOpen = false;
+        private Boolean _raportGarantiiDialogHostOpen = false;
+        private Boolean _cantitateTotalaVandutaVisible = false;
+        private Boolean _cheltuieliTotaleVisible = false;
 
         //new client 
         private String _newClientNume = "";
@@ -51,10 +55,11 @@ namespace PBDProject.ViewModels
         ObservableCollection<PurchaseModel> _purchaseModels = new ObservableCollection<PurchaseModel>();
         private Byte _purchaseCantitate = 0;
 
-
         private String _searchTextClient;
         private String _searchTextProdus;
         private String _searchTextVanzare;
+        private String _cantitateTotalaVanduta;
+        private String _cheltuieliTotale;
 
         public MainWindowViewModel()
         {
@@ -142,6 +147,21 @@ namespace PBDProject.ViewModels
 
         }
 
+        public ObservableCollection<VanzareModel> ProduseGarantiiValide
+        {
+            get
+            {
+                if (_produseGarantiiValide == null)
+                    _produseGarantiiValide = new ObservableCollection<VanzareModel>();
+                return _produseGarantiiValide;
+            }
+            set
+            {
+                _produseGarantiiValide = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ClientModel SelectedClient
         {
             get => _selectedClient;
@@ -217,6 +237,36 @@ namespace PBDProject.ViewModels
             set
             {
                 _raportClientDialogHostOpen = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Boolean RaportGarantiiDialogHostOpen
+        {
+            get => _raportGarantiiDialogHostOpen;
+            set
+            {
+                _raportGarantiiDialogHostOpen = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Boolean CantitateTotalaVandutaVisible
+        {
+            get => _cantitateTotalaVandutaVisible;
+            set
+            {
+                _cantitateTotalaVandutaVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Boolean CheltuieliTotaleVisible
+        {
+            get => _cheltuieliTotaleVisible;
+            set
+            {
+                _cheltuieliTotaleVisible = value;
                 OnPropertyChanged();
             }
         }
@@ -381,6 +431,26 @@ namespace PBDProject.ViewModels
                     VanzariList = new ObservableCollection<VanzareModel>(VanzariList
                         .Where(x => x.Produs.ToLower().Contains(_searchTextVanzare.Trim().ToLower())
                         || x.NumeClient.ToLower().Contains(_searchTextVanzare.Trim().ToLower())).ToList());
+                OnPropertyChanged();
+            }
+        }
+
+        public String CantitateTotalaVanduta
+        {
+            get => _cantitateTotalaVanduta;
+            set
+            {
+                _cantitateTotalaVanduta = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public String CheltuieliTotale
+        {
+            get => _cheltuieliTotale;
+            set
+            {
+                _cheltuieliTotale = value;
                 OnPropertyChanged();
             }
         }

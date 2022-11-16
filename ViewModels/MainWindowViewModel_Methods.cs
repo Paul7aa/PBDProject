@@ -3,6 +3,7 @@ using PBDProject.Models;
 using PBDProject.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -51,6 +52,7 @@ namespace PBDProject.ViewModels
                 }
 
                 sqlDataReader.Close();
+                CheltuieliTotaleVisible = false;
             }
             catch (Exception ex)
             {
@@ -78,6 +80,8 @@ namespace PBDProject.ViewModels
                 }
 
                 sqlDataReader.Close();
+                CantitateTotalaVandutaVisible = false;
+
             }
             catch (Exception ex)
             {
@@ -250,8 +254,8 @@ namespace PBDProject.ViewModels
                 CreateSqlCommand("SELECT * FROM ##RaportPersoanaTable");
                 _sqlCommand.ExecuteNonQuery();
                 SqlDataReader sqlDataReader = _sqlCommand.ExecuteReader();
-                
-                
+
+
                 while (sqlDataReader.Read())
                 {
                     RaportClientRowModel raportRowModel = new RaportClientRowModel((string)sqlDataReader["Nume"], (string)sqlDataReader["Prenume"], (string)sqlDataReader["Produs"],
@@ -263,12 +267,102 @@ namespace PBDProject.ViewModels
                 sqlDataReader.Close();
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ShowError("Eroare generare raport client: " + ex.Message);
             }
         }
+        
+        private void GenerateGarantiiReport()
+        {
+            try
+            {
+                ProduseGarantiiValide.Clear();
+                CreateSqlProcedure("RaportGarantii");
+                _sqlCommand.ExecuteNonQuery();
 
+                SqlDataReader sqlDataReader = _sqlCommand.ExecuteReader();
+
+
+                while (sqlDataReader.Read())
+                {
+                    VanzareModel produsGarantieValida = new VanzareModel((int)sqlDataReader["IdProdus"], (string)sqlDataReader["Produs"], ((DateTime)sqlDataReader["DataExpirarii"]).Date);
+
+                    ProduseGarantiiValide.Add(produsGarantieValida);
+                }
+
+                sqlDataReader.Close();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Eroare generare raport garanții: " + ex.Message);
+            }
+        }
+
+        private void ShowTopProdus()
+        {
+            try
+            {
+                CreateSqlProcedure("CelMaiVandutProdus");
+                _sqlCommand.ExecuteNonQuery();
+                SqlDataReader sqlDataReader = _sqlCommand.ExecuteReader();
+
+                while (sqlDataReader.Read())
+                {
+                    ProduseList = new ObservableCollection<ProdusModel>(ProduseList.Where(x => x.IdProdus == (int)sqlDataReader["IdProdus"]).ToList());
+                    CantitateTotalaVanduta = ((int)sqlDataReader["CantitateTotala"]).ToString();
+                    CantitateTotalaVandutaVisible = true;
+                }
+                sqlDataReader.Close();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Eroare generare raport garanții: " + ex.Message);
+            }
+
+        }
+
+        private void ShowTopClient()
+        {
+            try
+            {
+                CreateSqlProcedure("TopClient");
+                _sqlCommand.ExecuteNonQuery();
+                SqlDataReader sqlDataReader = _sqlCommand.ExecuteReader();
+
+                while (sqlDataReader.Read())
+                {
+                    ClientiList = new ObservableCollection<ClientModel>(ClientiList.Where(x => x.IdClient == (int)sqlDataReader["IdClient"]).ToList());
+                    CheltuieliTotale = ((double)sqlDataReader["CheltuieliTotale"]).ToString();
+                    CheltuieliTotaleVisible = true;
+                }
+                sqlDataReader.Close();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Eroare generare raport garanții: " + ex.Message);
+            }
+
+        }
+
+        private void ShowVanzariTopDate()
+        {
+            try
+            {
+                CreateSqlProcedure("DataCeleMaiMulteVanzari");
+                _sqlCommand.ExecuteNonQuery();
+                SqlDataReader sqlDataReader = _sqlCommand.ExecuteReader();
+
+                while (sqlDataReader.Read())
+                {
+                    VanzariList = new ObservableCollection<VanzareModel>(VanzariList.Where(x => x.DataVanzarii.Date == ((DateTime)sqlDataReader["DataVanzarii"]).Date).ToList());
+                }
+            }
+            catch(Exception ex)
+            {
+                ShowError("Eroare generare raport garanții: " + ex.Message);
+            }
+        }
         private void ShowError(string msg)
         {
             new CustomMessageBox(msg, MessageType.Error, MessageButtons.Ok) { Owner = Application.Current.MainWindow }.ShowDialog();

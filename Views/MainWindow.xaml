@@ -694,6 +694,77 @@
                         Content="Închide" />
 
                 </Grid>
+
+                <Grid
+                    x:Name="RaportGarantiiDialogHost"
+                    Margin="10,0,10,0"
+                    Visibility="{Binding RaportGarantiiDialogHostOpen, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="70" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="100" />
+                        <RowDefinition Height="10" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="10" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="20"
+                        Text="Produse vândute cu garanții valiabile" />
+
+                    <DataGrid
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Width="600"
+                        Height="400"
+                        AutoGenerateColumns="False"
+                        BorderBrush="LightBlue"
+                        BorderThickness="0.75"
+                        CanUserDeleteRows="False"
+                        CanUserReorderColumns="False"
+                        CanUserResizeRows="False"
+                        CanUserSortColumns="True"
+                        CellStyle="{StaticResource MaterialDesignDataGridCell}"
+                        ItemsSource="{Binding ProduseGarantiiValide, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        SelectionMode="Single"
+                        SelectionUnit="FullRow">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding IdProdus}"
+                                Header="IdProdus"
+                                IsReadOnly="True" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Produs}"
+                                Header="Produs"
+                                IsReadOnly="True" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding DataExpirarii, StringFormat=dd-MM-yyyy}"
+                                Header="DataExpirării"
+                                IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Width="100"
+                        HorizontalAlignment="Right"
+                        Command="{Binding CloseDialogHost}"
+                        Content="Închide" />
+
+                </Grid>
             </Grid>
         </materialDesign:DialogHost.DialogContent>
         <Grid>
@@ -742,6 +813,14 @@
                                 Margin="20,0,0,20"
                                 Command="{Binding DeleteClientCommand}"
                                 Content="{materialDesign:PackIcon Kind=Delete,
+                                                                  Size=20}"
+                                Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
+                            <Button
+                                Width="35"
+                                Height="35"
+                                Margin="20,0,0,20"
+                                Command="{Binding RefreshClientiCommand}"
+                                Content="{materialDesign:PackIcon Kind=Refresh,
                                                                   Size=20}"
                                 Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
                         </StackPanel>
@@ -824,13 +903,30 @@
                             Command="{Binding RaportPersoanaCommand}"
                             Content="Raport persoană"
                             Style="{StaticResource MaterialDesignFlatMidBgButton}" />
-
-                        <Button
+                        <StackPanel
                             Grid.Row="4"
                             Grid.Column="3"
-                            Width="200"
-                            Content="Afișare top-client"
-                            Style="{StaticResource MaterialDesignFlatMidBgButton}" />
+                            Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding CheltuieliTotaleVisible, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock
+                                    Margin="0,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{StaticResource MaterialDesignDarkForeground}"
+                                    Text="Cheltuieli totale:" />
+                                <TextBlock
+                                    Margin="0,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{StaticResource MaterialDesignDarkForeground}"
+                                    Text="{Binding CheltuieliTotale, UpdateSourceTrigger=PropertyChanged}" />
+
+                            </StackPanel>
+
+                            <Button
+                                Width="200"
+                                Command="{Binding AfisareTopClientCommand}"
+                                Content="Afișare top-client"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}" />
+                        </StackPanel>
 
                     </Grid>
                 </TabItem>
@@ -873,6 +969,14 @@
                                 Margin="20,0,0,20"
                                 Command="{Binding DeleteProdusCommand}"
                                 Content="{materialDesign:PackIcon Kind=Delete,
+                                                                  Size=20}"
+                                Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
+                            <Button
+                                Width="35"
+                                Height="35"
+                                Margin="20,0,0,20"
+                                Command="{Binding RefreshProduseCommand}"
+                                Content="{materialDesign:PackIcon Kind=Refresh,
                                                                   Size=20}"
                                 Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
                         </StackPanel>
@@ -960,19 +1064,28 @@
                                     IsReadOnly="True" />
                             </DataGrid.Columns>
                         </DataGrid>
-                        <Button
+                        <StackPanel
                             Grid.Row="4"
                             Grid.Column="1"
-                            Width="200"
-                            Content="Raport garanții valabile"
-                            Style="{StaticResource MaterialDesignFlatMidBgButton}" />
-
-                        <Button
-                            Grid.Row="4"
-                            Grid.Column="3"
-                            Width="200"
-                            Content="Afișare top-client"
-                            Style="{StaticResource MaterialDesignFlatMidBgButton}" />
+                            Orientation="Horizontal">
+                            <Button
+                                Width="200"
+                                Command="{Binding AfisareTopProdusCommand}"
+                                Content="Afișare top-produs"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}" />
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding CantitateTotalaVandutaVisible, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{StaticResource MaterialDesignDarkForeground}"
+                                    Text="Cantitate totală vândută:" />
+                                <TextBlock
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{StaticResource MaterialDesignDarkForeground}"
+                                    Text="{Binding CantitateTotalaVanduta, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </StackPanel>
                     </Grid>
                 </TabItem>
 
@@ -1014,6 +1127,14 @@
                                 Margin="20,0,0,20"
                                 Command="{Binding DeleteVanzareCommand}"
                                 Content="{materialDesign:PackIcon Kind=Delete,
+                                                                  Size=20}"
+                                Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
+                            <Button
+                                Width="35"
+                                Height="35"
+                                Margin="20,0,0,20"
+                                Command="{Binding RefreshVanzariCommand}"
+                                Content="{materialDesign:PackIcon Kind=Refresh,
                                                                   Size=20}"
                                 Style="{StaticResource MaterialDesignFloatingActionLightButton}" />
                         </StackPanel>
@@ -1108,14 +1229,16 @@
                             Grid.Row="4"
                             Grid.Column="1"
                             Width="200"
-                            Content="Generare Raport"
+                            Command="{Binding RaportGarantiiCommand}"
+                            Content="Raport garanții valabile"
                             Style="{StaticResource MaterialDesignFlatMidBgButton}" />
 
                         <Button
                             Grid.Row="4"
                             Grid.Column="3"
                             Width="200"
-                            Content="Afișare top-client"
+                            Command="{Binding AfisareDataVanzariCommand}"
+                            Content="Data cu max. vânzări"
                             Style="{StaticResource MaterialDesignFlatMidBgButton}" />
 
                     </Grid>

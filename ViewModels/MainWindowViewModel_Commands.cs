@@ -30,6 +30,14 @@ namespace PBDProject.ViewModels
         private ICommand _addSelectedPurchaseCommand;
         private ICommand _removePurchaseCommand;
         private ICommand _raportPersoanaCommand;
+        private ICommand _raportGarantiiCommand;
+        private ICommand _afisareTopProdusCommand;
+        private ICommand _afisareTopClientCommand;
+        private ICommand _refreshClientiCommand;
+        private ICommand _refreshProduseCommand;
+        private ICommand _refreshVanzariCommand;
+        private ICommand _afisareDataVanzariCommand;
+
 
         public ICommand CloseDialogHost
         {
@@ -166,8 +174,85 @@ namespace PBDProject.ViewModels
             {
                 if (_raportPersoanaCommand == null)
                     _raportPersoanaCommand = new RelayCommand((_) => RaportPersoanaOnClick(),
-                        (_) => SelectedClient != null);
+                        (_) => SelectedClient != null && ClientiList.Count > 0);
                 return _raportPersoanaCommand;
+            }
+        }
+
+        public ICommand RaportGarantiiCommand
+        {
+            get
+            {
+                if (_raportGarantiiCommand == null)
+                    _raportGarantiiCommand = new RelayCommand((_) => RaportGarantiiOnClick(),
+                        (_) => VanzariList.Count > 0);
+                return _raportGarantiiCommand;
+            }
+        }
+
+        public ICommand AfisareTopProdusCommand
+        {
+            get
+            {
+                if (_afisareTopProdusCommand == null)
+                    _afisareTopProdusCommand = new RelayCommand((_) => AfisareTopProdusOnClick(),
+                        (_) => VanzariList.Count > 0 && ProduseList.Count > 0);
+                return _afisareTopProdusCommand;
+            }
+        }
+
+        public ICommand AfisareTopClientCommand
+        {
+            get
+            {
+                if (_afisareTopClientCommand == null)
+                    _afisareTopClientCommand = new RelayCommand((_) => AfisareTopClientOnClick(),
+                        (_) => VanzariList.Count > 0 && ClientiList.Count > 0);
+                return _afisareTopClientCommand;
+            }
+        }
+
+        public ICommand RefreshClientiCommand
+        {
+            get
+            {
+                if (_refreshClientiCommand == null)
+                    _refreshClientiCommand = new RelayCommand((_) => RefreshClientData(),
+                        (_) => true);
+                return _refreshClientiCommand;
+            }
+        }
+
+        public ICommand RefreshProduseCommand
+        {
+            get
+            {
+                if (_refreshProduseCommand == null)
+                    _refreshProduseCommand = new RelayCommand((_) => RefreshProdusData(),
+                        (_) => true);
+                return _refreshProduseCommand;
+            }
+        }
+
+        public ICommand RefreshVanzariCommand
+        {
+            get
+            {
+                if (_refreshVanzariCommand == null)
+                    _refreshVanzariCommand = new RelayCommand((_) => RefreshVanzareData(),
+                        (_) => true);
+                return _refreshVanzariCommand;
+            }
+        }
+
+        public ICommand AfisareDataVanzariCommand
+        {
+            get
+            {
+                if (_afisareDataVanzariCommand == null)
+                    _afisareDataVanzariCommand = new RelayCommand((_) => AfisareDataVanzariOnClick(),
+                        (_) => true);
+                return _afisareDataVanzariCommand;
             }
         }
 
@@ -180,6 +265,7 @@ namespace PBDProject.ViewModels
                 AddProdusDialogHostOpen = (dialogType == "produs") ? true : false;
                 AddVanzareDialogHostOpen = (dialogType == "vanzare") ? true : false;
                 RaportClientDialogHostOpen = (dialogType == "raportclient") ? true : false;
+                RaportGarantiiDialogHostOpen = (dialogType == "raportgarantii") ? true : false;
                 DialogHostOpen = true;
             }
             catch (Exception ex)
@@ -316,6 +402,27 @@ namespace PBDProject.ViewModels
         {
             GenerateClientReport();
             OpenDialogHost("raportclient");
+        }
+
+        public void RaportGarantiiOnClick()
+        {
+            GenerateGarantiiReport();
+            OpenDialogHost("raportgarantii");
+        }
+
+        public void AfisareTopProdusOnClick()
+        {
+            ShowTopProdus();
+        }
+
+        public void AfisareTopClientOnClick()
+        {
+            ShowTopClient();
+        }
+
+        public void AfisareDataVanzariOnClick()
+        {
+            ShowVanzariTopDate();
         }
 
         private bool CanExecuteAddClient()

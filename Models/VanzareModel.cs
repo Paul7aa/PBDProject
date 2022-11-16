@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Printing;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,6 +28,13 @@ namespace PBDProject.Models
             _cantitate = cantitate;
             _dataVanzarii = dataVanzarii;
             _dataExpirarii = dataExpirarii;
+        }
+
+        public VanzareModel(Int32 idProdus, String produs, DateTime dataExpirarii)
+        {
+            _idProdus = idProdus;
+            _produs = produs;
+            _dataExpirarii = dataExpirarii; 
         }
 
         public Int32 IdVanzare
