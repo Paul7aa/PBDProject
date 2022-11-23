@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "67sEifV3ws+Ldxxnsd8V9KpKh8ZAt2cZkqcTjF+40fnNHC4tJ0lyfU1kX/RFBE7eBS3+n04+6GDmRZWg8r7sDg==",
+  "dgSpecHash": "rjgn2ZArXfpN8eV/9tqjKE6q/GoPla74sxYESUwiIIBrFOlM6qVgrKeu0FNWJOYHRvrd/+vPn2RneVrCpxQLpA==",
   "success": true,
-  "projectFilePath": "D:\\University\\Anul3\\PBD\\PBDProject\\PBDProject.csproj",
+  "projectFilePath": "D:\\University\\Anul_III\\PBD\\PBDProject\\PBDProject.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Paul\\.nuget\\packages\\dragablz\\0.0.3.234\\dragablz.0.0.3.234.nupkg.sha512",
     "C:\\Users\\Paul\\.nuget\\packages\\materialdesigncolors\\2.0.9\\materialdesigncolors.2.0.9.nupkg.sha512",

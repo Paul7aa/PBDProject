@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\University\\Anul3\\PBD\\PBDProject\\PBDProject.csproj": {}
+    "D:\\University\\Anul_III\\PBD\\PBDProject\\PBDProject.csproj": {}
   },
   "projects": {
-    "D:\\University\\Anul3\\PBD\\PBDProject\\PBDProject.csproj": {
+    "D:\\University\\Anul_III\\PBD\\PBDProject\\PBDProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\University\\Anul3\\PBD\\PBDProject\\PBDProject.csproj",
+        "projectUniqueName": "D:\\University\\Anul_III\\PBD\\PBDProject\\PBDProject.csproj",
         "projectName": "PBDProject",
-        "projectPath": "D:\\University\\Anul3\\PBD\\PBDProject\\PBDProject.csproj",
+        "projectPath": "D:\\University\\Anul_III\\PBD\\PBDProject\\PBDProject.csproj",
         "packagesPath": "C:\\Users\\Paul\\.nuget\\packages\\",
-        "outputPath": "D:\\University\\Anul3\\PBD\\PBDProject\\obj\\",
+        "outputPath": "D:\\University\\Anul_III\\PBD\\PBDProject\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

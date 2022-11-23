@@ -11,10 +11,10 @@
     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:validation="clr-namespace:PBDProject.Domain.ValidationRules"
     Title="Magazin Virtual"
-    Width="900"
-    Height="600"
-    MinWidth="900"
-    MinHeight="600"
+    Width="1000"
+    Height="700"
+    MinWidth="1000"
+    MinHeight="700"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{materialDesign:MaterialDesignFont}"
     TextElement.FontSize="14"
@@ -771,11 +771,25 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <dragablz:TabablzControl BorderThickness="0">
-                <dragablz:TabablzControl.InterTabController>
-                    <dragablz:InterTabController />
-                </dragablz:TabablzControl.InterTabController>
-                <TabItem Header="Clienți">
+            <TabControl
+                Grid.Column="0"
+                VerticalContentAlignment="Center"
+                materialDesign:ColorZoneAssist.Mode="PrimaryLight"
+                materialDesign:NavigationRailAssist.ShowSelectionBackground="True"
+                SnapsToDevicePixels="True"
+                Style="{StaticResource MaterialDesignNavigationRailTabControl}"
+                TabStripPlacement="Top">
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Width="Auto" Height="Auto">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                HorizontalAlignment="Center"
+                                Kind="AccountCash" />
+                            <TextBlock HorizontalAlignment="Center" Text="Clienți" />
+                        </StackPanel>
+                    </TabItem.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
@@ -931,7 +945,17 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem Header="Produse">
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Width="Auto" Height="Auto">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                HorizontalAlignment="Center"
+                                Kind="Cart" />
+                            <TextBlock HorizontalAlignment="Center" Text="Produse" />
+                        </StackPanel>
+                    </TabItem.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
@@ -1089,7 +1113,17 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem Header="Vânzari">
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Width="Auto" Height="Auto">
+                            <materialDesign:PackIcon
+                                Width="24"
+                                Height="24"
+                                HorizontalAlignment="Center"
+                                Kind="Cash" />
+                            <TextBlock HorizontalAlignment="Center" Text="Vânzări" />
+                        </StackPanel>
+                    </TabItem.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
@@ -1243,8 +1277,7 @@
 
                     </Grid>
                 </TabItem>
-
-            </dragablz:TabablzControl>
+            </TabControl>
         </Grid>
     </materialDesign:DialogHost>
 
